@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uday Sankar Singha · GitHub Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #030a12;
+  --surface:  rgba(10,25,45,0.7);
+  --border:   rgba(0,200,255,0.12);
+  --cyan:     #00d4ff;
+  --green:    #00ffb3;
+  --purple:   #a78bfa;
+  --gold:     #fbbf24;
+  --text:     #cce8f4;
+  --muted:    rgba(180,220,240,0.45);
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'DM Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* ── CANVAS BG ── */
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── AURORA ── */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ab {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  mix-blend-mode: screen;
+  animation: ab-drift linear infinite both;
+  opacity: 0;
+}
+@keyframes ab-drift {
+  0%   { opacity:0; transform: translate(0,0) scale(1); }
+  15%  { opacity: var(--op); }
+  50%  { opacity: calc(var(--op)*1.3); transform: translate(var(--dx),var(--dy)) scale(var(--sc)); }
+  85%  { opacity: var(--op); }
+  100% { opacity:0; transform: translate(var(--dx2),var(--dy2)) scale(0.9); }
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+/* ── HERO ── */
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  margin-bottom: 3.5rem;
+  animation: fadeUp 1.2s ease 0.2s both;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+}
+.avatar-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: conic-gradient(var(--cyan), var(--purple), var(--green), var(--cyan));
+  animation: spin 6s linear infinite;
+  z-index: 0;
+}
+.avatar-ring-mask {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--bg);
+  z-index: 1;
+}
+.avatar-wrap img {
+  position: absolute;
+  inset: 6px;
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  border-radius: 50%;
+  z-index: 2;
+  object-fit: cover;
+}
+.avatar-glow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, transparent 70%);
+  z-index: 0;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-glow { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
+
+.hero-info { min-width: 0; }
+
+.hero-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--cyan);
+  text-shadow: 0 0 15px var(--cyan);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #e8f6ff;
+  text-shadow: 0 0 40px rgba(0,212,255,0.3);
+  margin-bottom: 0.4rem;
+}
+.hero-name span { font-style: italic; color: var(--cyan); }
+
+.hero-handle {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+.hero-handle a {
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: 0 0 10px var(--green);
+  transition: opacity 0.2s;
+}
+.hero-handle a:hover { opacity: 0.7; }
+
+.hero-bio {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+.hero-meta span { display: flex; align-items: center; gap: 0.4rem; }
+.hero-meta .dot { width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan); }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 3rem;
+  animation: fadeUp 1.2s ease 0.45s both;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.stat-card::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.stat-card:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.35); }
+.stat-card:hover::before { opacity: 1; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 20px var(--cyan);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.section-header h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan);
+}
+.section-line {
+  flex:1;
+  height:1px;
+  background: linear-gradient(90deg, rgba(0,212,255,0.3), transparent);
+}
+
+/* ── REPOS ── */
+.repos {
+  margin-bottom: 3rem;
+  animation: fadeUp 1.2s ease 0.65s both;
+}
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.repo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 1.2rem 1rem;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.repo-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0,255,179,0.35);
+  box-shadow: 0 8px 30px rgba(0,255,179,0.08);
+}
+.repo-icon { font-size: 1rem; margin-bottom: 0.2rem; }
+.repo-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--green);
+  text-shadow: 0 0 10px rgba(0,255,179,0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.repo-desc {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+}
+.repo-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: auto;
+}
+.lang-dot { width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold); }
+
+/* ── FOCUS CARD ── */
+.focus-section {
+  animation: fadeUp 1.2s ease 0.85s both;
+  margin-bottom: 3rem;
+}
+.focus-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.focus-emoji { font-size: 2.5rem; }
+.focus-text h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #e8f6ff;
+  margin-bottom: 0.3rem;
+}
+.focus-text p { font-size: 0.75rem; font-weight: 300; color: var(--muted); line-height: 1.6; }
+
+/* ── FOOTER ── */
+.profile-footer {
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: rgba(180,220,240,0.2);
+  text-transform: uppercase;
+  animation: fadeUp 1.2s ease 1s both;
+}
+.profile-footer a { color: var(--cyan); text-decoration: none; opacity: 0.5; }
+
+/* ── UTILS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(28px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* crosshair */
+#xhair {
+  position: fixed;
+  width: 18px; height: 18px;
+  pointer-events: none;
+  z-index: 999;
+  transform: translate(-50%,-50%);
+}
+#xhair::before, #xhair::after {
+  content:'';
+  position:absolute;
+  background: var(--cyan);
+  opacity: 0.6;
+}
+#xhair::before { width:1px;height:100%;left:50%;top:0; }
+#xhair::after  { width:100%;height:1px;top:50%;left:0; }
+
+@media(max-width:600px){
+  .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .hero-meta { justify-content: center; }
+  .stats-row { grid-template-columns: repeat(3,1fr); }
+  .focus-card { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="aurora" id="aurora"></div>
+<div id="xhair"></div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-glow"></div>
+      <div class="avatar-ring"></div>
+      <div class="avatar-ring-mask"></div>
+      <img src="https://avatars.githubusercontent.com/u/264553567?v=4" alt="Uday Sankar Singha">
+    </div>
+    <div class="hero-info">
+      <p class="hero-label">GitHub Profile · CSE AIML</p>
+      <h1 class="hero-name">Uday Sankar <span>Singha</span></h1>
+      <p class="hero-handle">
+        <a href="https://github.com/udaycollagebwu-debug" target="_blank">@udaycollagebwu-debug</a>
+        &nbsp;·&nbsp; Brainware University
+      </p>
+      <p class="hero-bio">Student of CSE AIML — writing C programs, building foundations,<br>focused on future goals. 🎯</p>
+      <div class="hero-meta">
+        <span><span class="dot"></span> Joined Feb 2026</span>
+        <span><span class="dot"></span> 10 Repositories</span>
+        <span><span class="dot"></span> India</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Repositories</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">C</div>
+      <div class="stat-label">Top Language</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Potential</div>
+    </div>
+  </div>
+
+  <!-- REPOS -->
+  <div class="repos">
+    <div class="section-header">
+      <h2>Popular Repositories</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="repo-grid">
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/store_student_data" target="_blank">
+        <div class="repo-icon">🗃️</div>
+        <div class="repo-name">store_student_data</div>
+        <div class="repo-desc">Taking input from user and storing student data.</div>
+        <div class="repo-lang"><span class="lang-dot"></span> C</div>
+      </a>
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/Store_in_file" target="_blank">
+        <div class="repo-icon">📁</div>
+        <div class="repo-name">Store_in_file</div>
+        <div class="repo-desc">Taking input from user and store it in a file.</div>
+        <div class="repo-lang"><span class="lang-dot"></span> C</div>
+      </a>
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/sorting-of-elements" target="_blank">
+        <div class="repo-icon">🔢</div>
+        <div class="repo-name">sorting-of-elements</div>
+        <div class="repo-desc">Sorting algorithms implemented in C.</div>
+        <div class="repo-lang"><span class="lang-dot"></span> C</div>
+      </a>
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/store-shop-itam-details" target="_blank">
+        <div class="repo-icon">🛒</div>
+        <div class="repo-name">store-shop-itam-details</div>
+        <div class="repo-desc">Shop item detail management system.</div>
+        <div class="repo-lang"><span class="lang-dot"></span> C</div>
+      </a>
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/stack" target="_blank">
+        <div class="repo-icon">📚</div>
+        <div class="repo-name">stack</div>
+        <div class="repo-desc">Input/output operations using stack data structure.</div>
+        <div class="repo-lang"><span class="lang-dot"></span> C</div>
+      </a>
+      <a class="repo-card" href="https://github.com/udaycollagebwu-debug/HTML-first-code" target="_blank">
+        <div class="repo-icon">🌐</div>
+        <div class="repo-name">HTML-first-code</div>
+        <div class="repo-desc">First steps in HTML — the web journey begins.</div>
+        <div class="repo-lang">
+          <span style="width:8px;height:8px;border-radius:50%;background:#e44d26;box-shadow:0 0 6px #e44d26;display:inline-block;"></span> HTML
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOCUS -->
+  <div class="focus-section">
+    <div class="section-header">
+      <h2>Current Focus</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="focus-card">
+      <div class="focus-emoji">🎯</div>
+      <div class="focus-text">
+        <h3>"Focusing for my future goals."</h3>
+        <p>CSE AIML student at Brainware University · Building strong foundations in C programming · Exploring data structures, file handling, and the web. Every line of code is a step toward tomorrow.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="profile-footer">
+    <a href="https://github.com/udaycollagebwu-debug" target="_blank">github.com/udaycollagebwu-debug</a>
+    &nbsp;·&nbsp; Uday Sankar Singha &nbsp;·&nbsp; 2026
+  </div>
+
+</div>
+
+<script>
+// ── CANVAS PARTICLES ──
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = innerWidth;
+let H = canvas.height = innerHeight;
+let mouse = { x: W/2, y: H/2 };
+const COLS = ['#00d4ff','#00ffb3','#a78bfa','#fbbf24','#60a5fa'];
+let particles = [];
+
+class P {
+  constructor(bx,by,burst){
+    this.x = bx ?? Math.random()*W;
+    this.y = by ?? Math.random()*H;
+    const a = Math.random()*Math.PI*2;
+    const sp = burst ? Math.random()*5+2 : Math.random()*0.4+0.05;
+    this.vx = Math.cos(a)*sp; this.vy = Math.sin(a)*sp;
+    this.r = burst ? Math.random()*3+1 : Math.random()*2+0.4;
+    this.c = COLS[Math.floor(Math.random()*COLS.length)];
+    this.al = Math.random()*0.6+0.3;
+    this.life = 1;
+    this.dec = burst ? Math.random()*0.015+0.008 : 0;
+    this.burst = burst||false;
+    this.tw = Math.random()*Math.PI*2;
+    this.tws = Math.random()*0.03+0.01;
+  }
+  update(){
+    this.tw += this.tws;
+    const fl = Math.sin(this.tw)*0.15+0.85;
+    if(!this.burst){
+      const dx=mouse.x-this.x, dy=mouse.y-this.y;
+      const d=Math.hypot(dx,dy);
+      if(d<180){ this.vx+=dx/d*0.025; this.vy+=dy/d*0.025; }
+    }
+    this.vx*=0.986; this.vy*=0.986;
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.burst){ this.life-=this.dec; this.al=this.life*fl; }
+    else {
+      this.al=(Math.random()*0.25+0.35)*fl;
+      if(this.x<0)this.x=W; if(this.x>W)this.x=0;
+      if(this.y<0)this.y=H; if(this.y>H)this.y=0;
+    }
+  }
+  draw(){
+    ctx.save();
+    ctx.globalAlpha=Math.max(0,this.al);
+    ctx.shadowBlur=14; ctx.shadowColor=this.c;
+    ctx.fillStyle=this.c;
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function init(){ particles=Array.from({length:100},()=>new P()); }
+
+function drawLines(){
+  for(let i=0;i<particles.length;i++){
+    const p=particles[i]; if(p.burst)continue;
+    for(let j=i+1;j<particles.length;j++){
+      const q=particles[j]; if(q.burst)continue;
+      const d=Math.hypot(p.x-q.x,p.y-q.y);
+      if(d<130){
+        const op=(1-d/130)*0.2;
+        ctx.save();
+        ctx.globalAlpha=op;
+        const g=ctx.createLinearGradient(p.x,p.y,q.x,q.y);
+        g.addColorStop(0,p.c); g.addColorStop(1,q.c);
+        ctx.strokeStyle=g; ctx.lineWidth=0.6;
+        ctx.shadowBlur=6; ctx.shadowColor=p.c;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+}
+
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  drawLines();
+  particles=particles.filter(p=>!p.burst||p.life>0);
+  particles.forEach(p=>{p.update();p.draw();});
+  while(particles.filter(p=>!p.burst).length<100) particles.push(new P());
+  requestAnimationFrame(loop);
+}
+
+// ── AURORA BLOBS ──
+const aurEl = document.getElementById('aurora');
+[
+  {c:'#003d6b',w:700,h:380,t:'-8%', l:'-5%',  dur:24,dx:'28vw', dy:'18vh', dx2:'8vw',  dy2:'35vh', sc:1.3, op:.18},
+  {c:'#005e44',w:580,h:320,t:'35%', l:'55%',  dur:30,dx:'-18vw',dy:'12vh', dx2:'-4vw', dy2:'-18vh',sc:0.8, op:.16},
+  {c:'#25005c',w:750,h:450,t:'55%', l:'8%',   dur:38,dx:'22vw', dy:'-20vh',dx2:'4vw',  dy2:'8vh',  sc:1.1, op:.14},
+  {c:'#003d6b',w:480,h:260,t:'-3%', l:'62%',  dur:20,dx:'-12vw',dy:'25vh', dx2:'18vw', dy2:'3vh',  sc:0.9, op:.15},
+  {c:'#4c0035',w:560,h:300,t:'65%', l:'72%',  dur:28,dx:'-22vw',dy:'-12vh',dx2:'4vw',  dy2:'-28vh',sc:1.2, op:.13},
+].forEach((b,i)=>{
+  const el=document.createElement('div');
+  el.className='ab';
+  el.style.cssText=`width:${b.w}px;height:${b.h}px;background:${b.c};top:${b.t};left:${b.l};
+    --dx:${b.dx};--dy:${b.dy};--dx2:${b.dx2};--dy2:${b.dy2};--sc:${b.sc};--op:${b.op};
+    animation-duration:${b.dur}s;animation-delay:${i*-5}s;`;
+  aurEl.appendChild(el);
+});
+
+// ── EVENTS ──
+const xh = document.getElementById('xhair');
+document.addEventListener('mousemove', e=>{
+  mouse.x=e.clientX; mouse.y=e.clientY;
+  xh.style.left=e.clientX+'px'; xh.style.top=e.clientY+'px';
+});
+document.addEventListener('click', e=>{
+  for(let i=0;i<25;i++) particles.push(new P(e.clientX,e.clientY,true));
+});
+window.addEventListener('resize', ()=>{
+  W=canvas.width=innerWidth; H=canvas.height=innerHeight;
+});
+
+init(); loop();
+</script>
+</body>
+</html>
